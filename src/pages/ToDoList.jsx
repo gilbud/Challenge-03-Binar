@@ -1,6 +1,14 @@
 import React, { useState } from "react";
 import dataTodo from "../data/data.json";
-import { Container, Row, Col, ListGroup, Button, Form } from "react-bootstrap";
+import {
+  Container,
+  Row,
+  Col,
+  ListGroup,
+  Button,
+  Form,
+  Modal,
+} from "react-bootstrap";
 import EditIcon from "../assets/img/edit.png";
 import DeleteIcon from "../assets/img/delete.png";
 import { Link } from "react-router-dom";
@@ -8,6 +16,10 @@ import { Link } from "react-router-dom";
 function ToDoList() {
   const [data, setData] = useState(dataTodo);
   const [search, setSearch] = useState("");
+
+  const [showModal, setShowModal] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [editTask, setEditTask] = useState("");
 
   const removeTodo = (remove) => {
     const removedTodo = data.filter((list) => {
@@ -43,6 +55,24 @@ function ToDoList() {
       return todo.complete === true;
     });
     setData(newTodos);
+  };
+
+  const openModal = (id) => {
+    setEditId(id);
+    setShowModal(true);
+  };
+
+  const closeModal = () => {
+    setEditId(null);
+    setShowModal(false);
+    setEditTask("");
+  };
+
+  const editTodo = () => {
+    const updatedTodos = data.map((todo) =>
+      todo.id === editId ? { ...todo, task: editTask } : todo
+    );
+    setData(updatedTodos);
   };
 
   return (
@@ -137,7 +167,12 @@ function ToDoList() {
                           checked={data.complete}
                           onChange={() => checkTodo(data.id)}
                         ></input>
-                        <img src={EditIcon} style={{ width: "16px" }} alt="" />
+                        <img
+                          src={EditIcon}
+                          style={{ width: "16px" }}
+                          alt=""
+                          onClick={() => openModal(data.id)}
+                        />
                         <img
                           src={DeleteIcon}
                           style={{ width: "16px", marginLeft: "8px" }}
@@ -170,6 +205,37 @@ function ToDoList() {
           </div>
         </div>
       </div>
+      <Modal show={showModal} onHide={closeModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Edit Task</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          {data &&
+            data.length > 0 &&
+            data
+              .filter((dataItem) => dataItem.id === editId)
+              .map((data) => (
+                <Form key={data.id}>
+                  <Form.Group controlId="formTask">
+                    <Form.Label>Task</Form.Label>
+                    <Form.Control
+                      type="text"
+                      defaultValue={data.task}
+                      onChange={(e) => setEditTask(e.target.value)}
+                    />
+                  </Form.Group>
+                </Form>
+              ))}
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={closeModal}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={editTodo}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 }
