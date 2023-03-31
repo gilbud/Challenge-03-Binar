@@ -1,0 +1,24 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 130vh;
+}
+
+.logo {
+  height: 17px;
+}
+
+.check {
+  width: 17px;
+}
+
+.tdsearch {
+  margin-top: 5px;
+  border: solid rgb(18, 69, 128) 1px;
+  padding: 20px;
+  border-radius: 5px;
+}
